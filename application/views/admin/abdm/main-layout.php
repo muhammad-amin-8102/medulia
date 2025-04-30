@@ -88,23 +88,31 @@
         <li>
             <a href="#createabha" data-toggle="tab">Create ABHA</a>
         </li>
+        <li>
+            <a href="#hip" data-toggle="tab">HIP</a>
+        </li>
     </ul>
 </div>
 <div class="tab-content">
     <!-- Registration Tab -->
     <div class="tab-pane fade in active" id="registration">
-        <?php $this->load->view('admin/register/abha-register-with-adhar'); ?>
+        <?php $this->load->view('admin/abdm/abha-register-with-adhar'); ?>
     </div>
 
     <!-- Verification Tab -->
-    <div class="tab-pane fade" id="verification">
+    <div class="tab-pane fade in" id="verification">
         <?php $this->load->view('admin/abdm/abha-number-validation'); ?>
     </div>
 
     <!-- Create ABHA Tab -->
-    <div class="tab-pane fade" id="createabha">
-        <?php $this->load->view('admin/register/abha-register-with-adhar'); ?>
+    <div class="tab-pane fade in" id="createabha">
+        <?php $this->load->view('admin/abdm/create-abha'); ?>
     </div>
+
+    <!-- HIP -->
+     <div class="tab-pane fade in" id="hip">
+        <?php $this->load->view('admin/abdm/abha-care'); ?>
+     </div>
 </div>
            
             
