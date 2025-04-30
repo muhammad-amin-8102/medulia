@@ -2448,6 +2448,7 @@ $lang["zoom_access_token_is_invalid_or_not_generated_from_zoom_setting"]="Zoom a
 
 $lang["abha_number_validation"] = "ABHA Number Validation";
 $lang["abha_address_validation"] = "ABHA Address Validation";
+$lang["abdm"] = "ABDM";
 
 /****************** Abha M1 Languages Ends **********************/
 

@@ -43,6 +43,12 @@
                    <i class="fas fa-list"></i> <span> <?php echo "Adhar Register"; ?></span>
                </a>
            </li>
+
+           <li class="treeview <?php echo set_Topmenu('abdm'); ?>">
+                <a href="<?php echo base_url(); ?>admin/abdm">
+                   <i class="fas fa-list"></i> <span> <?php echo $this->lang->line('abdm'); ?></span>
+               </a>
+           </li>
 		   
 		   <!--****************** Abha M1 Menu Ends **********************-->
             
