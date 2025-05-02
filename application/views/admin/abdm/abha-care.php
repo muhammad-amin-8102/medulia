@@ -1,6 +1,6 @@
 <style>
     .custom-tab .nav-link {
-        background-color: #00796B;
+        background-color: #222533;
         color: white;
         margin: 5px;
         border-radius: 5px;
@@ -43,19 +43,19 @@
         min-width: 140px;
     }
 
-    .tab-pane .dataTables_wrapper {
+    /* .tab-pane .dataTables_wrapper {
         width: 95%;
-    }
+    } */
 
 
     .dt-buttons .btn {
-        background-color: #00796b;
+        background-color: #222533;
         margin: 5px;
         color: #fff;
     }
 
     thead.table-success th {
-        background-color: #00796b !important;
+        background-color: #222533 !important;
         color: white;
         padding: 12px 0px;
     }
@@ -65,7 +65,7 @@
     }
 
     .form-inline .btn-success {
-        background-color: #00796b;
+        background-color: #222533;
         margin-top: 5px;
     }
 
@@ -80,7 +80,7 @@
     }
 </style>
 <div class="col-md-12">
-    <div class="container mt-4">
+    <div class="containers mt-4">
         <div class="card">
             <div class="tabDatatable">
                 <div class="card-header p-2">
@@ -126,7 +126,7 @@
                 <div class="card-body">
                     <div class="tab-content">
                         <div class="tab-pane active" id="linking" role="tabpanel">
-                            <div class="container">
+                            <div class="containers">
                                 <div class="card mb-3 shadow-sm">
                                     <div class="card-header header bg-secondary text-white">
                                         Abha Linking Token
@@ -141,8 +141,8 @@
                                                 <label for="pwd">Date To :</label>
                                                 <input type="text" class="form-control" id="date_to" placeholder="Enter password" name="text">
                                             </div>
-                                            <button type="submit" class="btn btn-success ms-3">Submit</button>
-                                            <button type="reset" class="btn btn-outline-success">Clear</button>
+                                            <button type="submit" class="btn btn-primary ms-3">Submit</button>
+                                            <button type="reset" class="btn btn-secondary">Clear</button>
                                         </form>
                                     </div>
                                 </div>
@@ -183,7 +183,7 @@
                             </div>
                         </div>
                         <div class="tab-pane fade" id="care" role="tabpanel">
-                            <div class="container">
+                            <div class="containers">
                                 <div class="card mb-3 shadow-sm">
                                     <div class="card-header header bg-secondary text-white">
                                         Abha Linking Token
@@ -255,7 +255,7 @@
                             </div>
                         </div>
                         <div class="tab-pane fade" id="fhir" role="tabpanel">
-                            <div class="container">
+                            <div class="containers">
                                 <div class="card mb-3 shadow-sm">
                                     <div class="card-header header bg-secondary text-white">
                                         FHIR Instance
@@ -310,7 +310,7 @@
                             </div>
                         </div>
                         <div class="tab-pane fade" id="context" role="tabpanel">
-                            <div class="container">
+                            <div class="containers">
                                 <div class="card mb-3 shadow-sm">
                                     <div class="card-header header bg-secondary text-white">
                                         Data Available Notification
@@ -367,7 +367,7 @@
                             </div>
                         </div>
                         <div class="tab-pane fade" id="discovery" role="tabpanel">
-                            <div class="container">
+                            <div class="containers">
                                 <div class="card mb-3 shadow-sm">
                                     <div class="card-header header bg-secondary text-white">
                                         Data Discovery
@@ -426,7 +426,7 @@
                             </div>
                         </div>
                         <div class="tab-pane fade" id="consent" role="tabpanel">
-                            <div class="container">
+                            <div class="containers">
                                 <div class="card mb-3 shadow-sm">
                                     <div class="card-header header bg-secondary text-white">
                                         Abha Care Consent
@@ -489,7 +489,7 @@
                             </div>
                         </div>
                         <div class="tab-pane fade" id="response" role="tabpanel">
-                            <div class="container">
+                            <div class="containers">
                                 <div class="card mb-3 shadow-sm">
                                     <div class="card-header header bg-secondary text-white">
                                         Abha Care Consent

@@ -203,7 +203,7 @@ class Consultcharges extends Admin_Controller
             $json_array = array('status' => 'fail', 'error' => $msg, 'message' => '');
         } else {
             $data = array('patient_id' => $this->input->post('patient_id'),
-                'date'                     => $this->customlib->dateFormatToYYYYMMDD($this->input->post('date'));,
+                'date'                     => $this->customlib->dateFormatToYYYYMMDD($this->input->post('date')),
                 'charge_id'                => $this->input->post('charge_id'),
                 'org_charge_id'            => $this->input->post('org_id'),
                 'apply_charge'             => $this->input->post('apply_charge'),

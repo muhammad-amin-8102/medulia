@@ -65,11 +65,11 @@
 
             <div class="container-fluid">
                 <ul class="nav nav-tabs">
-                    <li class="active">
+                    <li >
                         <a href="#registration" data-toggle="tab">
                             <i class="fa fa-building"></i> Registration</a>
                     </li>
-                    <li>
+                    <li class="active">
                         <a href="#verification" data-toggle="tab">
                             <i class="fa fa-check-circle"></i> Verification</a>
                     </li>
@@ -99,12 +99,12 @@
             </div>
             <div class="tab-content">
                 <!-- Registration Tab -->
-                <div class="tab-pane fade in active" id="registration">
+                <div class="tab-pane fade in " id="registration">
                     <?php $this->load->view('admin/abdm/abha-register-with-adhar'); ?>
                 </div>
 
                 <!-- Verification Tab -->
-                <div class="tab-pane fade in" id="verification">
+                <div class="tab-pane fade in active" id="verification">
                     <?php $this->load->view('admin/abdm/abha-number-validation'); ?>
                 </div>
 
