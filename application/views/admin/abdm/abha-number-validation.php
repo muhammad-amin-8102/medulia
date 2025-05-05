@@ -15,6 +15,30 @@
         border-bottom: none;
         margin-bottom: 0;
     }
+
+    .spinner-border {
+        display: inline-block;
+        width: 1rem;
+        height: 1rem;
+        vertical-align: text-bottom;
+        border: 0.15em solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: spinner-border 0.75s linear infinite;
+    }
+
+    @keyframes spinner-border {
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    #responseMessage .alert {
+        min-width: 300px;
+        max-width: 400px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        opacity: 0.9;
+    }
 </style>
 <div class="col-md-12">
 
@@ -42,41 +66,135 @@
         </div>
 
         <div class="box-body">
-            <!-- <form action="<?php //echo base_url(); 
-                                ?>admin/abdm/abhanumberverification" method="POST"> -->
-            <div class="form-check mb-15 mt-15">
-                <label class="radio-inline">
-                    <input type="radio" onclick="selectVerificationMethod(this.value)" name="verify_by" value="abha_no" checked> Using ABHA Number
-                </label>
+            <!-- Tab Navigation -->
+            <ul class="nav nav-tabs" id="verifyAbhaTabs" role="tablist">
+                <li class="nav-item active">
+                    <a class="nav-link" id="abha-address-tab" data-toggle="tab" href="#abha-address" role="tab" aria-controls="abha-address" aria-selected="true">Abha Address/No.</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="aadhaar-mobile-tab" data-toggle="tab" href="#aadhaar-mobile" role="tab" aria-controls="aadhaar-mobile" aria-selected="false">Aadhaar/Mobile OTP</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="qr-scanner-tab" data-toggle="tab" href="#qr-scanner" role="tab" aria-controls="qr-scanner" aria-selected="false">QR Scanner</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="initiate-linking-tab" data-toggle="tab" href="#initiate-linking" role="tab" aria-controls="initiate-linking" aria-selected="false">Initiate Linking</a>
+                </li>
+            </ul>
 
-                <label class="radio-inline">
-                    <input type="radio" type="radio" onclick="selectVerificationMethod(this.value)" name="verify_by" value="mobile_no"> Using Mobile Number
-                </label>
+            <!-- Tab Content -->
+            <div class="tab-content" id="verifyAbhaTabContent" style="padding-top: 3em;">
+                <!-- ABHA Address/No Tab -->
+                <div class="tab-pane fade in active" id="abha-address" role="tabpanel" aria-labelledby="abha-address-tab">
+                    <div class="form-group row mt-3">
+                        <div class="col-md-2">
+                            <label for="verify_by_abha" class="form-label">ABHA Address/No:</label>
+                            <select class="form-control" id="verify_by_abha" name="verify_by_abha" onchange="selectVerificationMethod(this.value)">
+                                <option value="abha_no" selected>ABHA Number</option>
+                                <option value="abha_address" selected>ABHA Address</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="abha_data" class="form-label">Enter ABHA Address/Number:</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="abha_data" name="abha_data" placeholder="Enter ABHA Address/Number" required>
+                                <div class="input-group-append">
+                                    <button class="btn btn-danger" type="button" id="verifyAbhaButton">
+                                        <i class="fa fa-search" id="verifyAbhaIcon"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="selectAuthAbhaSection" style="display: none;">
+                            <div class="col-md-2">
+                                <label for="auth_mode" class="form-label">Mode of Auth:</label>
+                                <select class="form-control" id="auth_mode" name="auth_mode">
+                                    <option value="" selected>-- Select Auth Mode --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-1" style="margin-top: 1.7em;">
+                                <button type="button" id="verifyAbhaAuthButton" class="btn btn-primary">Verify</button>
+                            </div>
+                        </div>
+                        <div id="enterOtpSectionAbha" style="display: none; margin-top: 1.8em;">
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="verifyOtpTextAbha" name="verifyOtpTextAbha" placeholder="Enter OTP">
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" id="verifyOtpButtonAbha" class="btn btn-primary">Verify OTP</button>
+                            </div>
+                        </div>
+                    </div>
 
-                <label class="radio-inline">
-                    <input type="radio" type="radio" onclick="selectVerificationMethod(this.value)" name="verify_by" value="aadhar_no"> Using Aadhar Number
-                </label>
 
+                    <!-- Send OTP Button -->
+                    <!-- <div class="form-group text-center mt-3">
+                        
+                    </div> -->
+
+                    <!-- Enter OTP Section -->
+                    <!-- <div id="enterOtpSection" style="display: none; margin-top: 20px;">
+                        <label for="otp">Enter OTP:</label>
+                        <input type="text" class="form-control" id="verifyOtpText" name="verifyOtpText" placeholder="Enter OTP">
+                        <button type="button" id="verifyOtpButton" class="btn btn-success" style="margin-top: 10px;">Verify OTP</button>
+                    </div> -->
+                </div>
+
+                <!-- Aadhaar/Mobile OTP Tab -->
+                <div class="tab-pane fade in" id="aadhaar-mobile" role="tabpanel" aria-labelledby="aadhaar-mobile-tab">
+                    <div class="form-group row mt-3">
+                        <div class="col-md-3">
+                            <label for="aadhaar_mobile_type" class="form-label">Aadhaar/Mobile:</label>
+                            <select class="form-control" id="aadhaar_mobile_type" name="aadhaar_mobile_type" onchange="selectVerificationMethod(this.value)">
+                                <option value="aadhaar_no" selected>Aadhaar Number</option>
+                                <option value="mobile_no">Mobile Number</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="aadhaar_mobile_data" class="form-label">Enter Aadhaar/Mobile No.:</label>
+                            <input type="text" class="form-control" id="aadhaar_mobile_data" name="aadhaar_mobile_data" placeholder="Aadhaar / Mobile No." required>
+                        </div>
+                        <div class="col-md-2" style="margin-top: 1.8em;">
+                            <button type="button" id="verifyAadhaarMobileButton" class="btn btn-primary">Verify</button>
+                        </div>
+                        <!-- Enter OTP Section -->
+                        <div id="enterOtpSectionAdhaar" style="display: none; margin-top: 1.8em;">
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="verifyOtpText" name="verifyOtpText" placeholder="Enter OTP">
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" id="verifyOtpButton" class="btn btn-primary">Verify OTP</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QR Scanner Tab -->
+                <div class="tab-pane fade in" id="qr-scanner" role="tabpanel" aria-labelledby="qr-scanner-tab">
+                    <div class="text-center mt-3">
+                        <button type="button" id="accessQrScannerButton" class="btn btn-success">
+                            <i class="fa fa-qrcode"></i> Access Scanner
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Initiate Linking Tab -->
+                <div class="tab-pane fade in" id="initiate-linking" role="tabpanel" aria-labelledby="initiate-linking-tab">
+                    <div class="text-center mt-3">
+                        <button type="button" id="initiateLinkingButton" class="btn btn-success">
+                            <i class="fa fa-link"></i> Initiate Linking
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Note Message -->
+                <div class="form-group mt-2">
+                    <p id="noteMsg" style="display:none"><small>Use your communication mobile number registered with ABDM</small></p>
+                </div>
+
+                <!-- Success/Error Message -->
+                <div id="responseMessage" style="position: fixed; top: 20px; right: 20px; z-index: 1050;"></div>
             </div>
-            <div class="mb-15 mt-15">
-                <!--label for="abha_data" id="methodText">ABHA Number:</label-->
-                <input type="text" class="form-control" id="abha_data" placeholder="Enter ABHA Number" name="abha_data" required>
-                <p id="noteMsg" style="display:none"><small>Use your communication mobile number registered with ABDM</small></p>
-            </div>
-            <div class="mb-15 mt-15 text-center">
-                <button type="button" name="submit" id="sendOtpButton" class="btn btn-primary">Send OTP</button>
-            </div>
-
-            <!-- Enter OTP Section -->
-            <div id="enterOtpSection" style="display: none; margin-top: 20px;">
-                <label for="otp">Enter OTP:</label>
-                <input type="text" class="form-control" id="verifyOtpText" name="verifyOtpText" placeholder="Enter OTP">
-                <button type="button" id="verifyOtpButton" class="btn btn-success" style="margin-top: 10px;">Verify OTP</button>
-            </div>
-
-            <!-- Success/Error Message -->
-            <div id="responseMessage" style="margin-top: 20px;"></div>
-            <!-- </form> -->
         </div>
     </div>
 
@@ -460,124 +578,340 @@
         document.getElementById("profile_dob").value = dob.toISOString().split("T")[0];
     }
 
+    // Method to save a property to session storage
+    function saveToSessionStorage(key, value) {
+        if (key && value !== undefined) {
+            sessionStorage.setItem(key, JSON.stringify(value));
+            console.log(`Saved to session storage: ${key} =`, value);
+        } else {
+            console.error("Key or value is missing or invalid.");
+        }
+    }
+
+    // Method to retrieve a property from session storage
+    function getFromSessionStorage(key) {
+        if (key) {
+            const value = sessionStorage.getItem(key);
+            if (value) {
+                console.log(`Retrieved from session storage: ${key} =`, JSON.parse(value));
+                return JSON.parse(value);
+            } else {
+                console.warn(`No value found in session storage for key: ${key}`);
+                return null;
+            }
+        } else {
+            console.error("Key is missing or invalid.");
+            return null;
+        }
+    }
+
+    // Method to remove a property from session storage
+    function removeFromSessionStorage(key) {
+        if (key) {
+            sessionStorage.removeItem(key);
+            console.log(`Removed from session storage: ${key}`);
+        } else {
+            console.error("Key is missing or invalid.");
+        }
+    }
+
+    function verifyUser(verifyButton, enterOtpSection, url, data, type = "ABHA") {
+        // Disable button and show loader
+        setButtonLoading(verifyButton, true);
+
+        const selectAuthAbhaSection = document.getElementById("selectAuthAbhaSection");
+
+        // Make AJAX call to send OTP
+        fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: data
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Display success message
+                    showMessage(data.message, "success");
+
+                    // Disable the Verify button
+                    verifyButton.disabled = true;
+
+                    if (type === "ABHA") {
+                        verifyButton.innerHTML = ``;
+                        verifyButton.classList.remove("btn-danger");
+                        verifyButton.classList.add("btn-success");
+                        verifyButton.innerHTML = `<i class="fa fa-check"></i>`;
+
+                        // Populate the auth_mode dropdown with authMethods
+                        populateAuthModes(data.data.authMethods);
+
+                        // Save ABHA number to session storage
+                        saveToSessionStorage("abhaNumber", data.data.ABHANumber);
+                        // show auth methods section
+                        selectAuthAbhaSection.style.display = "block";
+                    } else {
+                        // Show Enter OTP section
+                        enterOtpSection.style.display = "block";
+                    }
+                } else {
+                    // Hide Enter OTP section
+                    enterOtpSection.style.display = "none";
+
+                    // Display error message
+                    showMessage(data.error, "danger");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                showMessage("An error occurred. Please try again.", "danger");
+            })
+            .finally(() => {
+                // Remove loader and enable button if not disabled
+                setButtonLoading(verifyButton, false);
+            });
+    }
+
+    function verifyOTP(verifyOtpBtn, otp) {
+        // Disable button and show loader
+        setButtonLoading(verifyOtpBtn, true);
+
+        // Make AJAX call to fetchAbhaProfile
+        fetch("<?php echo base_url('admin/Abdm/fetchAbhaProfile'); ?>", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    abha_otp: otp
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Display success message and profile data
+                    showMessage("Profile fetched successfully!", "success");
+
+                    // Populate the form with the profile data
+                    populatePatientForm(data.profile);
+
+                    // Disable the Verify OTP button
+                    verifyOtpBtn.disabled = true;
+                } else {
+                    // Display error message
+                    showMessage(data.error, "danger");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                showMessage("An error occurred. Please try again.", "danger");
+            })
+            .finally(() => {
+                // Remove loader and enable button if not disabled
+                setButtonLoading(verifyOtpBtn, false);
+            });
+    }
+
+    // Helper function to show dismissable messages
+    function showMessage(message, type) {
+        // Create the alert element
+        const alertDiv = document.createElement("div");
+        alertDiv.className = `alert alert-${type} alert-dismissible fade in`;
+        alertDiv.role = "alert";
+        alertDiv.innerHTML = `
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                ${message}
+            `;
+
+        // Append the alert to the body or a specific container
+        const container = document.getElementById("responseMessage") || document.body;
+        container.appendChild(alertDiv);
+
+        // Automatically dismiss the alert after 3 seconds
+        setTimeout(() => {
+            $(alertDiv).alert("close");
+        }, 3000);
+    }
+
+    // Helper function to toggle button loading state
+    function setButtonLoading(button, isLoading) {
+        if (isLoading) {
+            button.disabled = true;
+            button.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> ${button.innerHTML}`;
+        } else {
+            button.disabled = false;
+            button.innerHTML = button.innerHTML.replace(/<span.*<\/span>/, "").trim();
+        }
+    }
+
+    function populatePatientForm(profile) {
+        // Populate fields in the Patient Registration Form
+        document.getElementById("profile_abha_number").value = profile.ABHANumber || "";
+        document.getElementById("profile_abha_address").value = profile.preferredAbhaAddress || "";
+        document.getElementById("profile_patient_name").value = profile.name || "";
+        document.getElementById("profile_gender").value = profile.gender === "M" ? "Male" : profile.gender === "F" ? "Female" : "Other";
+        // Set the date in the correct format for the date input
+        const dobInput = document.getElementById("profile_dob");
+        if (profile.yearOfBirth && profile.dayOfBirth) {
+            const formattedDate = `${profile.yearOfBirth}-${String(profile.monthOfBirth).padStart(2, '0')}-${String(profile.dayOfBirth).padStart(2, '0')}`;
+            // console.log("Formatted Date:", formattedDate); // Debugging statement
+            dobInput.value = formattedDate;
+        } else {
+            dobInput.value = ""; // Clear the field if no date is available
+        }
+        document.getElementById("profile_mobile_no").value = profile.mobile || "";
+        document.getElementById("profile_pincode").value = profile.pincode || "";
+        document.getElementById("profile_address").value = profile.address || "";
+
+        // Populate state, district, sub-district, and town fields
+        document.getElementById("profile_state").value = profile.stateName || "";
+        document.getElementById("profile_district").value = profile.districtName || "";
+        document.getElementById("profile_sub_district").value = profile.subdistrictName || "";
+        document.getElementById("profile_town_village").value = profile.townName || "";
+
+        // Update the patient image preview if available
+        const patientImagePreview = document.getElementById("profile_patient_image_preview");
+        if (profile.profilePhoto) {
+            patientImagePreview.src = `data:image/jpeg;base64,${profile.profilePhoto}`;
+        }
+    }
+
+    function populateAuthModes(authMethods) {
+        const authModeDropdown = document.getElementById("auth_mode");
+
+        // Clear existing options
+        authModeDropdown.innerHTML = "";
+
+        // Add a default placeholder option
+        const defaultOption = document.createElement("option");
+        defaultOption.value = "";
+        defaultOption.textContent = "-- Select Auth Mode --";
+        authModeDropdown.appendChild(defaultOption);
+
+        // Supported methods
+        const supportedMethods = ["aadhaar_otp", "mobile_otp"];
+
+        // Append new options from authMethods
+        authMethods.forEach(method => {
+            const option = document.createElement("option");
+            const methodValue = method.toLowerCase(); // Convert to lowercase
+            option.value = methodValue;
+            option.textContent = method.replace(/_/g, " "); // Replace underscores with spaces for better readability
+
+            // Disable unsupported methods
+            if (!supportedMethods.includes(methodValue)) {
+                option.disabled = true;
+            }
+
+            authModeDropdown.appendChild(option);
+        });
+    }
+
     document.addEventListener("DOMContentLoaded", function() {
-        const sendOtpButton = document.getElementById("sendOtpButton");
-        const enterOtpSection = document.getElementById("enterOtpSection");
+        const verifyAadhaarMobileButton = document.getElementById("verifyAadhaarMobileButton");
+        const verifyAbhaButton = document.getElementById("verifyAbhaButton");
+        const enterOtpSectionAdhaar = document.getElementById("enterOtpSectionAdhaar");
+        const enterOtpSectionAbha = document.getElementById("enterOtpSectionAbha");
         const responseMessage = document.getElementById("responseMessage");
         const verifyOtpButton = document.getElementById("verifyOtpButton");
+        const verifyAbhaAuthButton = document.getElementById("verifyAbhaAuthButton");
+        const authModeDropdown = document.getElementById("auth_mode");
+        const verifyOtpButtonAbha = document.getElementById("verifyOtpButtonAbha");
+
+        // Function to toggle the button state
+        function toggleVerifyButton() {
+            if (authModeDropdown.value) {
+                verifyAbhaAuthButton.disabled = false; // Enable the button
+            } else {
+                verifyAbhaAuthButton.disabled = true; // Disable the button
+            }
+        }
+
+        // Initialize button state on page load
+        toggleVerifyButton();
+
+        // Add event listener to the dropdown
+        authModeDropdown.addEventListener("change", toggleVerifyButton);
+
+        verifyAadhaarMobileButton.addEventListener("click", function() {
+            const verifyBy = document.getElementById('aadhaar_mobile_type').value;
+            const aadhaarMobileData = document.getElementById("aadhaar_mobile_data").value;
+
+            const url = "<?php echo base_url('admin/abdm/adhaarMobileOTPVerification'); ?>";
+            const data = JSON.stringify({
+                verify_by: verifyBy,
+                abha_data: aadhaarMobileData
+            });
+
+            if (!aadhaarMobileData) {
+                showMessage("Please enter the required data.", "danger");
+                return;
+            }
+
+            verifyUser(verifyAadhaarMobileButton, enterOtpSectionAdhaar, url, data, "ADHAAR");
+        });
+
+        verifyAbhaAuthButton.addEventListener("click", function() {
+            const verifyBy = document.getElementById('auth_mode').value;
+            const abhaNumber = getFromSessionStorage("abhaNumber");
+
+            const url = "<?php echo base_url('admin/abdm/adhaarMobileOTPVerification'); ?>";
+            const data = JSON.stringify({
+                verify_by: verifyBy,
+                abha_data: abhaNumber
+            });
+
+            if (!abhaNumber) {
+                showMessage("Please reverify Abha Number/Address.", "danger");
+                return;
+            }
+
+            verifyUser(verifyAbhaAuthButton, enterOtpSectionAbha, url, data, "ADHAAR");
+        });
+
+        verifyAbhaButton.addEventListener("click", function() {
+            const verifyByAbha = document.getElementById('verify_by_abha').value;
+            const abhaData = document.getElementById("abha_data").value;
+
+            const url = "<?php echo base_url('admin/abdm/confirmAbha'); ?>";
+            const data = JSON.stringify({
+                verify_by: verifyByAbha,
+                abha_data: abhaData
+            });
+
+            if (!abhaData) {
+                showMessage("Please enter the required data.", "danger");
+                return;
+            }
+
+            verifyUser(verifyAbhaButton, enterOtpSectionAbha, url, data);
+        });
 
         verifyOtpButton.addEventListener("click", function() {
             const verifyOtpText = document.getElementById("verifyOtpText").value;
             //console.log("OTP Value:", verifyOtpText); // Debugging statement
 
             if (!verifyOtpText) {
-                responseMessage.innerHTML = `<div class="alert alert-danger">Please enter the OTP.</div>`;
+                showMessage("Please enter the OTP.", "danger");
                 return;
             }
 
-            // Make AJAX call to fetchAbhaProfile
-            fetch("<?php echo base_url('admin/Abdm/fetchAbhaProfile'); ?>", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        abha_otp: verifyOtpText
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Display success message and profile data
-                        responseMessage.innerHTML = `<div class="alert alert-success">Profile fetched successfully!</div>`;
-                        // Populate the form with the profile data
-                        populatePatientForm(data.profile);
-                    } else {
-                        // Display error message
-                        responseMessage.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
-                    }
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    responseMessage.innerHTML = `<div class="alert alert-danger">An error occurred. Please try again.</div>`;
-                });
+            verifyOTP(verifyOtpButton, verifyOtpText);
         });
 
-        sendOtpButton.addEventListener("click", function() {
-            const verifyBy = document.querySelector('input[name="verify_by"]:checked').value;
-            const abhaData = document.getElementById("abha_data").value;
+        verifyOtpButtonAbha.addEventListener("click", function() {
+            const verifyOtpTextAbha = document.getElementById("verifyOtpTextAbha").value;
+            //console.log("OTP Value:", verifyOtpText); // Debugging statement
 
-            // console.log("Verify By:", verifyBy);
-            // console.log("ABHA Data:", abhaData);
-
-            if (!abhaData) {
-                responseMessage.innerHTML = `<div class="alert alert-danger">Please enter the required data.</div>`;
+            if (!verifyOtpTextAbha) {
+                showMessage("Please enter the OTP.", "danger");
                 return;
             }
 
-            // Make AJAX call to send OTP
-            fetch("<?php echo base_url('admin/abdm'); ?>", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        verify_by: verifyBy,
-                        abha_data: abhaData
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Show Enter OTP section
-                        enterOtpSection.style.display = "block";
-
-                        // Display success message
-                        responseMessage.innerHTML = `<div class="alert alert-success">${data.message}</div>`;
-                    } else {
-                        // Hide Enter OTP section
-                        enterOtpSection.style.display = "none";
-
-                        // Display error message
-                        responseMessage.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
-                    }
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    responseMessage.innerHTML = `<div class="alert alert-danger">An error occurred. Please try again.</div>`;
-                });
+            verifyOTP(verifyOtpButton, verifyOtpTextAbha);
         });
-
-        function populatePatientForm(profile) {
-            // Populate fields in the Patient Registration Form
-            document.getElementById("profile_abha_number").value = profile.ABHANumber || "";
-            document.getElementById("profile_abha_address").value = profile.preferredAbhaAddress || "";
-            document.getElementById("profile_patient_name").value = profile.name || "";
-            document.getElementById("profile_gender").value = profile.gender === "M" ? "Male" : profile.gender === "F" ? "Female" : "Other";
-            // Set the date in the correct format for the date input
-            const dobInput = document.getElementById("profile_dob");
-            if (profile.yearOfBirth && profile.dayOfBirth) {
-                const formattedDate = `${profile.yearOfBirth}-${String(profile.monthOfBirth).padStart(2, '0')}-${String(profile.dayOfBirth).padStart(2, '0')}`;
-                // console.log("Formatted Date:", formattedDate); // Debugging statement
-                dobInput.value = formattedDate;
-            } else {
-                dobInput.value = ""; // Clear the field if no date is available
-            }
-            document.getElementById("profile_mobile_no").value = profile.mobile || "";
-            document.getElementById("profile_pincode").value = profile.pincode || "";
-            document.getElementById("profile_address").value = profile.address || "";
-
-            // Populate state, district, sub-district, and town fields
-            document.getElementById("profile_state").value = profile.stateName || "";
-            document.getElementById("profile_district").value = profile.districtName || "";
-            document.getElementById("profile_sub_district").value = profile.subdistrictName || "";
-            document.getElementById("profile_town_village").value = profile.townName || "";
-
-            // Update the patient image preview if available
-            const patientImagePreview = document.getElementById("profile_patient_image_preview");
-            if (profile.profilePhoto) {
-                patientImagePreview.src = `data:image/jpeg;base64,${profile.profilePhoto}`;
-            }
-        }
     });
 </script>

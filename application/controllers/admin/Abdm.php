@@ -25,7 +25,22 @@ class Abdm extends Admin_Controller
 
     public function index()
     {
+        $this->session->set_userdata('top_menu', 'abdm');
+        $this->session->set_userdata('sub_menu', '');
+        $role                        = $this->customlib->getStaffRole();
+        $role_id                     = json_decode($role)->id;
+        $staffid                     = $this->customlib->getStaffID();
+        $notifications               = $this->notification_model->getUnreadStaffNotification($staffid, $role_id);
+        $data['notifications']       = $notifications;
+        $systemnotifications         = $this->notification_model->getUnreadNotification();
+        $data['systemnotifications'] = $systemnotifications;
+        $this->load->view('layout/header', $data);
+        $this->load->view('admin/abdm/main-layout', $data);
+        $this->load->view('layout/footer', $data);
+    }
 
+    public function adhaarMobileOTPVerification()
+    {
         if ($this->input->server('REQUEST_METHOD') === 'POST') {
             // Decode the raw JSON payload
             $inputData = json_decode(file_get_contents('php://input'), true);
@@ -52,21 +67,28 @@ class Abdm extends Admin_Controller
             $url = ABHA_BASE_URL . "/v3/profile/login/request/otp";
 
             switch ($verify_by) {
-                case "abha_no":
-                    $data = array("scope" => array("abha-login", "aadhaar-verify"), "loginHint" => "abha-number", "loginId" => $encryptedOutput, "otpSystem" => "aadhaar");
+                // case "abha_no":
+                //     $data = array("scope" => array("abha-login", "aadhaar-verify"), "loginHint" => "abha-number", "loginId" => $encryptedOutput, "otpSystem" => "aadhaar");
+                //     break;
+                case "mobile_otp":
+                    $data = array("scope" => array("abha-login", "mobile-verify"), "loginHint" => "abha-number", "loginId" => $encryptedOutput, "otpSystem" => "abdm");
                     break;
 
                 case "mobile_no":
                     $data = array("scope" => array("abha-login", "mobile-verify"), "loginHint" => "mobile", "loginId" => $encryptedOutput, "otpSystem" => "abdm");
                     break;
 
-                case "aadhar_no":
+                case "aadhaar_no":
                     $data = array("scope" => array("abha-login", "aadhaar-verify"), "loginHint" => "aadhaar", "loginId" => $encryptedOutput, "otpSystem" => "aadhaar");
                     break;
 
-                case "biometric":
-                    $data = array("scope" => array("abha-login", "aadhaar-bio-verify"), "loginHint" => "abha-number", "loginId" => $encryptedOutput, "otpSystem" => "aadhaar");
+                case "aadhaar_otp":
+                    $data = array("scope" => array("abha-login", "aadhaar-verify"), "loginHint" => "abha-number", "loginId" => $encryptedOutput, "otpSystem" => "aadhaar");
                     break;
+
+                    // case "biometric":
+                    //     $data = array("scope" => array("abha-login", "aadhaar-bio-verify"), "loginHint" => "abha-number", "loginId" => $encryptedOutput, "otpSystem" => "aadhaar");
+                    //     break;
             }
 
             $random_request_id = generateRequestId();
@@ -113,33 +135,111 @@ class Abdm extends Admin_Controller
                     "error" => $message
                 ));
             } else {
+                // print_r($response);
+                // die();
                 echo json_encode(array(
                     "success" => false,
                     "error" => "Invalid LoginId"
                 ));
             }
             exit;
+        } else {
+            echo json_encode(array(
+                "success" => false,
+                "error" => "Invalid request method."
+            ));
         }
+    }
 
-        $this->session->set_userdata('top_menu', 'abdm');
-        $this->session->set_userdata('sub_menu', '');
-        $role                        = $this->customlib->getStaffRole();
-        $role_id                     = json_decode($role)->id;
-        $staffid                     = $this->customlib->getStaffID();
-        $notifications               = $this->notification_model->getUnreadStaffNotification($staffid, $role_id);
-        $data['notifications']       = $notifications;
-        $systemnotifications         = $this->notification_model->getUnreadNotification();
-        $data['systemnotifications'] = $systemnotifications;
+    public function confirmAbha()
+    {
+        if ($this->input->server('REQUEST_METHOD') === 'POST') {
+            // Decode the raw JSON payload
+            $inputData = json_decode(file_get_contents('php://input'), true);
 
-        //$data['mysqlVersion'] = $this->setting_model->getMysqlVersion();
-        //$data['sqlMode']      = $this->setting_model->getSqlMode();
-        //$data['jsonarr']      = $jsonarr;
+            // Access the data from the decoded JSON
+            $verify_by = isset($inputData['verify_by']) ? $inputData['verify_by'] : null;
+            $abha_data = isset($inputData['abha_data']) ? $inputData['abha_data'] : null;
 
+            if (!$verify_by || !$abha_data) {
+                echo json_encode(array(
+                    "success" => false,
+                    "error" => "Missing required parameters."
+                ));
+                exit;
+            }
 
+            // Encrypt the ABHA number
+            // $encryptedOutput = getRsaEncryptedOutput($abha_number);
 
-        $this->load->view('layout/header', $data);
-        $this->load->view('admin/abdm/main-layout', $data);
-        $this->load->view('layout/footer', $data);
+            // Prepare the URL and data for the API request
+            $url = ABHA_BASE_URL . "/v3/profile/login/search";
+            $data = array(
+                "ABHANumber" => $abha_data
+            );
+
+            if ($verify_by == "abha_address") {
+                $url = ABHA_BASE_URL . "/v3/phr/web/login/abha/search";
+                $data = array(
+                    "abhaAddress" => $abha_data
+                );
+            }
+
+            // Generate a random request ID and timestamp
+            $random_request_id = generateRequestId();
+            $timestamp = time();
+            $microseconds = microtime(true) - $timestamp;
+            $utc_date = gmdate('Y-m-d\TH:i:s', $timestamp);
+            $milliseconds = round($microseconds * 1000);
+            $timestamp = $utc_date . '.' . sprintf('%03d', $milliseconds) . 'Z';
+
+            // Get the access token
+            $accessToken = getAccessToken();
+
+            // Set the headers for the API request
+            $headerSet = array(
+                "Content-Type:application/json",
+                "REQUEST-ID:$random_request_id",
+                "TIMESTAMP:$timestamp",
+                "Authorization:Bearer $accessToken"
+            );
+
+            // Call the ABHA API
+            $response = callAbhaAPI('POST', $url, $headerSet, $data);
+            $response_code = $response['response_code'];
+            $response_body = $response['response_body'];
+            // print_r($response_body); die();
+            // Decode the response body
+            $data = json_decode($response_body, true);
+
+            if ($response_code == "200") {
+                $message = "User Present";
+
+                // Return success response
+                echo json_encode(array(
+                    "success" => true,
+                    "message" => $message,
+                    "data" => $data
+                ));
+            } else if ($response_code == "400") {
+                echo json_encode(array(
+                    "success" => false,
+                    "error" => $data['ABHANumber']
+                ));
+            } else {
+                // Handle other errors
+                echo json_encode(array(
+                    "success" => false,
+                    "error" => $data['message']
+                ));
+            }
+            exit;
+        } else {
+            echo json_encode(array(
+                "success" => false,
+                "error" => "Invalid request method."
+            ));
+        }
     }
 
     public function fetchAbhaProfile()
@@ -167,7 +267,7 @@ class Abdm extends Admin_Controller
             // Step 1: Verify OTP
             $url = ABHA_BASE_URL . "/v3/profile/login/verify";
             $data = array(
-                "scope" => array("abha-login", $verify_by === "mobile_no" ? "mobile-verify" : "aadhaar-verify"),
+                "scope" => array("abha-login", $verify_by === "mobile_otp" || $verify_by === "mobile_no" ? "mobile-verify" : "aadhaar-verify"),
                 "authData" => array(
                     "authMethods" => array("otp"),
                     "otp" => array(
@@ -195,6 +295,7 @@ class Abdm extends Admin_Controller
             );
 
             $response = callAbhaAPI('POST', $url, $headerSet, $data);
+            // print_r($response); die();
             $response_code = $response['response_code'];
             $response_body = $response['response_body'];
             $data = json_decode($response_body, true);
@@ -211,6 +312,7 @@ class Abdm extends Admin_Controller
 
             // Extract token and transaction ID
             $xToken = $data['token'];
+            // $refreshToken = $data['refreshToken'];
             $transactionId = $data['txnId'];
 
             // Step 2: Handle Intermediate Step for Mobile Verification
@@ -242,6 +344,7 @@ class Abdm extends Admin_Controller
                 );
 
                 $response = callAbhaAPI('POST', $url, $headerSet, $data);
+                // print_r($response); die();
                 $response_code = $response['response_code'];
                 $response_body = $response['response_body'];
                 $data = json_decode($response_body, true);
@@ -332,14 +435,14 @@ class Abdm extends Admin_Controller
         $this->load->view('layout/footer', $data);
     }
 
-    public function getAbhaAccessToken()
-    {
-        $timestamp = time();  // Unix timestamp (seconds)
-        $microseconds = microtime(true) - $timestamp;
-        $utc_date = gmdate('Y-m-d\TH:i:s', $timestamp);
-        $milliseconds = round($microseconds * 1000);  // Convert to milliseconds
-        $timestamp =  $utc_date . '.' . sprintf('%03d', $milliseconds) . 'Z';
+    // public function getAbhaAccessToken()
+    // {
+    //     $timestamp = time();  // Unix timestamp (seconds)
+    //     $microseconds = microtime(true) - $timestamp;
+    //     $utc_date = gmdate('Y-m-d\TH:i:s', $timestamp);
+    //     $milliseconds = round($microseconds * 1000);  // Convert to milliseconds
+    //     $timestamp =  $utc_date . '.' . sprintf('%03d', $milliseconds) . 'Z';
 
-        echo "Access Token : " . getAccessToken() . "\n RequestId: " . generateRequestId() . "\n timestamp: " . $timestamp;
-    }
+    //     echo "Access Token : " . getAccessToken() . "\n RequestId: " . generateRequestId() . "\n timestamp: " . $timestamp;
+    // }
 }

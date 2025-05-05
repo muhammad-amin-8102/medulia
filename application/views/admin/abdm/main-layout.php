@@ -65,7 +65,7 @@
 
             <div class="container-fluid">
                 <ul class="nav nav-tabs">
-                    <li >
+                    <li>
                         <a href="#registration" data-toggle="tab">
                             <i class="fa fa-building"></i> Registration</a>
                     </li>
@@ -129,31 +129,30 @@
 
 
 <script>
-    function selectVerificationMethod(vl) {
-        switch (vl) {
-            case "abha_no":
-                document.getElementById("abha_data").placeholder = "Enter your ABHA number";
-                document.getElementById("noteMsg").style.display = "none";
-                //document.getElementById("methodText").innerHTML = "ABHA Number";
-                break;
+    function selectVerificationMethod(value) {
 
-            case "mobile_no":
-                document.getElementById("abha_data").placeholder = "Enter your registered mobile number";
-                document.getElementById("noteMsg").style.display = "block";
-                // document.getElementById("methodText").innerHTML = "Mobile Number";
-                break;
+        const noteMsg = document.getElementById("noteMsg");
+        const abhaDataInput = document.getElementById("abha_data");
+        const aadhaarMobileDataInput = document.getElementById("aadhaar_mobile_data");
 
-            case "aadhar_no":
-                document.getElementById("abha_data").placeholder = "Enter your Aadhar number";
-                document.getElementById("noteMsg").style.display = "none";
-                //document.getElementById("methodText").innerHTML = "Aadhar Number";
-                break;
-
-            case "biometric":
-                document.getElementById("abha_data").placeholder = "Enter your ABHA number";
-                document.getElementById("noteMsg").style.display = "none";
-                //document.getElementById("methodText").innerHTML = "ABHA Number";
-                break;
+        if (value == "mobile_no") {
+            noteMsg.style.display = "block";
+            noteMsg.innerHTML = "<small>Use your communication mobile number registered with ABDM</small>";
+            aadhaarMobileDataInput.placeholder = "Enter Mobile Number";
+        } else if (value == "aadhar_no") {
+            noteMsg.style.display = "block";
+            noteMsg.innerHTML = "<small>Use your Aadhaar Number</small>";
+            aadhaarMobileDataInput.placeholder = "Enter Aadhaar Number";
+        } else if (value == "abha_no"){
+            noteMsg.style.display = "block";
+            noteMsg.innerHTML = "<small>Use your ABHA 14 Digit Number</small>";
+            abhaDataInput.placeholder = "Enter ABHA Number";
+        } else if (value == "abha_address"){
+            noteMsg.style.display = "block";
+            noteMsg.innerHTML = "<small>Use your ABHA Address in @sbx format</small>";
+            abhaDataInput.placeholder = "Enter ABHA Address";
+        } else {
+            noteMsg.style.display = "none";
         }
     }
 </script>
