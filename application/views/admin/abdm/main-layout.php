@@ -65,18 +65,15 @@
 
             <div class="container-fluid">
                 <ul class="nav nav-tabs">
-                    <li>
-                        <a href="#registration" data-toggle="tab">
-                            <i class="fa fa-building"></i> Registration</a>
-                    </li>
                     <li class="active">
-                        <a href="#verification" data-toggle="tab">
-                            <i class="fa fa-check-circle"></i> Verification</a>
-                    </li>
-                    <li>
                         <a href="#createabha" data-toggle="tab">
                             <i class="fa fa-newspaper-o"></i> Create ABHA</a>
                     </li>
+                    <li>
+                        <a href="#verification" data-toggle="tab">
+                            <i class="fa fa-check-circle"></i> Verification</a>
+                    </li>
+                    
                     <li>
                         <a href="#revisit" data-toggle="tab">
                             <i class="fa fa-calendar-plus-o"></i> Revisit
@@ -98,19 +95,13 @@
                 </ul>
             </div>
             <div class="tab-content">
-                <!-- Registration Tab -->
-                <div class="tab-pane fade in " id="registration">
-                    <?php $this->load->view('admin/abdm/abha-register-with-adhar'); ?>
-                </div>
-
-                <!-- Verification Tab -->
-                <div class="tab-pane fade in active" id="verification">
-                    <?php $this->load->view('admin/abdm/abha-number-validation'); ?>
-                </div>
-
                 <!-- Create ABHA Tab -->
-                <div class="tab-pane fade in" id="createabha">
+                <div class="tab-pane fade in active" id="createabha">
                     <?php $this->load->view('admin/abdm/create-abha'); ?>
+                </div>
+                <!-- Verification Tab -->
+                <div class="tab-pane fade in" id="verification">
+                    <?php $this->load->view('admin/abdm/abha-number-validation'); ?>
                 </div>
 
                 <!-- HIP -->

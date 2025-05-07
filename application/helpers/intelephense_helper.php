@@ -166,6 +166,16 @@
  * @property CI_Input $input // Provides access to CodeIgniter's input class
  * @property CI_Lang $lang // Provides access to CodeIgniter's language class
  * @property Chatuser_model $chatuser_model This model handles chat user-related operations, including fetching unread chat counts.
+ * @property string $notification // Provides access to the notification configuration
+ * @property string $notificationurl // Provides access to the notification URL configuration
+ * @property array $yesno_condition // Provides access to the yes/no condition configuration
+ * @property string $patient_notificationurl // Provides access to the patient notification URL configuration
+ * @property array $search_type // Provides access to the search type configuration
+ * @property array $appointment_status // Provides access to the appointment status configuration
+ * @property string $time_format // Provides access to the hospital time format
+ * @property array $payment_mode // Provides access to the payment mode configuration
+ * @property Avha_create $avha_create // Provides access to the Avha_create model
+ * @property CI_Upload $upload // Provides access to the CodeIgniter upload library
  */
 class CI_Controller
 {

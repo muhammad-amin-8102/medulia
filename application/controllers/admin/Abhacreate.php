@@ -99,7 +99,7 @@ class Abhacreate extends Admin_Controller
         $response = curl_exec($curl);
         curl_close($curl);
 
-       //print_r($response);exit;
+      //print_r($response);exit;
 
        $res = json_decode($response);
         if(!empty($res->txnId)){
@@ -403,7 +403,7 @@ public function customavaCreate(){
        $data['preferredAbhaAddress'] = $res->preferredAbhaAddress;
        
        $this->avha_create->customavaSavedb($data);
-       die(json_encode(array("status"=>"1","message"=>$res->message)));   
+       die(json_encode(array("status"=>"1","message"=>"Abha Address Created Successfully")));   
      }else{
       die(json_encode(array("status"=>"0","message"=>$res->error->message))); 
      }
